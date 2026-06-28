@@ -115,7 +115,7 @@ export function DishesTable({
                   )}
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t">
+                <div className="flex items-center justify-between pt-1">
                   <div className="flex items-center gap-2">
                     <Switch checked={dish.active} onCheckedChange={() => handleToggle(dish)} />
                     <span className="text-xs text-muted-foreground">
