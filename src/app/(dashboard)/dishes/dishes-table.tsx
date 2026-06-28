@@ -5,6 +5,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -81,12 +82,73 @@ export function DishesTable({
 
   return (
     <>
-      <div className="rounded-md border bg-card">
+      {/* Mobile: cards */}
+      <div className="grid grid-cols-1 gap-3 md:hidden">
+        {dishes.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8">No hay platos.</p>
+        ) : (
+          dishes.map((dish) => (
+            <Card key={dish.id} className={!dish.active ? "opacity-50" : ""}>
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-semibold truncate">{dish.name}</p>
+                    {dish.description && (
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                        {dish.description}
+                      </p>
+                    )}
+                  </div>
+                  <p className="font-semibold text-sm shrink-0">{dish.price.toFixed(2)} €</p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {dish.category_id && (
+                    <Badge variant="secondary">{categoryMap[dish.category_id]}</Badge>
+                  )}
+                  {dish.allergen_ids.map((id) =>
+                    allergenMap[id] ? (
+                      <Badge key={id} variant="outline" className="text-xs">
+                        {allergenMap[id].name}
+                      </Badge>
+                    ) : null
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-1 border-t">
+                  <div className="flex items-center gap-2">
+                    <Switch checked={dish.active} onCheckedChange={() => handleToggle(dish)} />
+                    <span className="text-xs text-muted-foreground">
+                      {dish.active ? "Activo" : "Inactivo"}
+                    </span>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => setEditing(dish)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => setDeleting(dish)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden md:block rounded-md border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nombre</TableHead>
-              <TableHead className="hidden md:table-cell">Categoría</TableHead>
+              <TableHead>Categoría</TableHead>
               <TableHead className="hidden lg:table-cell">Alérgenos</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Activo</TableHead>
@@ -111,7 +173,7 @@ export function DishesTable({
                       </p>
                     )}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell>
                     {dish.category_id ? (
                       <Badge variant="secondary">{categoryMap[dish.category_id]}</Badge>
                     ) : (
@@ -122,21 +184,16 @@ export function DishesTable({
                     <div className="flex flex-wrap gap-1">
                       {dish.allergen_ids.map((id) =>
                         allergenMap[id] ? (
-                          <span key={id} title={allergenMap[id].name} className="text-lg">
-                            {allergenMap[id].icon}
-                          </span>
+                          <Badge key={id} variant="outline" className="text-xs">
+                            {allergenMap[id].name}
+                          </Badge>
                         ) : null
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">
-                    {dish.price.toFixed(2)} €
-                  </TableCell>
+                  <TableCell className="font-medium">{dish.price.toFixed(2)} €</TableCell>
                   <TableCell>
-                    <Switch
-                      checked={dish.active}
-                      onCheckedChange={() => handleToggle(dish)}
-                    />
+                    <Switch checked={dish.active} onCheckedChange={() => handleToggle(dish)} />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
