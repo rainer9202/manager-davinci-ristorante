@@ -12,7 +12,7 @@ const navItems = [
   { href: "/allergens", label: "Alérgenos", icon: AlertCircle },
 ];
 
-export function NavLinks() {
+export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -21,6 +21,7 @@ export function NavLinks() {
         <li key={href}>
           <Link
             href={href}
+            onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
               pathname === href

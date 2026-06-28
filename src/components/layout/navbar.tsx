@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Menu, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 export function Navbar() {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -22,7 +24,7 @@ export function Navbar() {
     <header className="h-14 border-b bg-card px-4 flex items-center justify-between sticky top-0 z-10">
       {/* Mobile: hamburger */}
       <div className="flex items-center gap-3">
-        <Sheet>
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger className="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
             <Menu className="h-5 w-5" />
           </SheetTrigger>
@@ -32,7 +34,7 @@ export function Navbar() {
               <p className="text-xs text-muted-foreground mt-0.5">Manager</p>
             </div>
             <nav className="p-4">
-              <NavLinks />
+              <NavLinks onNavigate={() => setOpen(false)} />
             </nav>
           </SheetContent>
         </Sheet>
