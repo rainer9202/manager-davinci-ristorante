@@ -1,0 +1,15 @@
+insert into allergens (name, icon) values
+  ('Gluten', '🌾'),
+  ('Crustáceos', '🦐'),
+  ('Huevo', '🥚'),
+  ('Pescado', '🐟'),
+  ('Cacahuetes', '🥜'),
+  ('Soja', '🫘'),
+  ('Lácteos', '🥛'),
+  ('Frutos de cáscara', '🌰'),
+  ('Apio', '🥬'),
+  ('Mostaza', '🟡'),
+  ('Sésamo', '🌿'),
+  ('Dióxido de azufre', '🍷'),
+  ('Altramuces', '🌸'),
+  ('Moluscos', '🦑');
