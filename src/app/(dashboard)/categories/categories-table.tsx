@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -53,74 +46,72 @@ export function CategoriesTable({
 
   return (
     <>
-      <div className="rounded-md border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead className="w-[100px] text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={2} className="text-center text-muted-foreground py-8">
-                  No hay categorías. Crea la primera.
-                </TableCell>
-              </TableRow>
-            ) : (
-              categories.map((cat) => (
-                <TableRow key={cat.id}>
-                  <TableCell className="font-medium">{cat.name}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditing(cat)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => setDeleting(cat)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {categories.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 col-span-full">
+            No hay categorías. Crea la primera.
+          </p>
+        ) : (
+          categories.map((cat) => (
+            <Card key={cat.id}>
+              <CardContent className="px-4 flex items-center justify-between gap-2">
+                <p className="font-medium truncate">{cat.name}</p>
+                <div className="flex gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setEditing(cat)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:text-destructive"
+                    onClick={() => setDeleting(cat)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
-      {/* Edit dialog */}
       {editing && (
         <CategoryForm
           open={!!editing}
-          onClose={() => { setEditing(null); onRefresh(); }}
+          onClose={() => {
+            setEditing(null);
+            onRefresh();
+          }}
           category={editing}
         />
       )}
 
-      {/* Delete confirm dialog */}
       <Dialog open={!!deleting} onOpenChange={(v) => !v && setDeleting(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Eliminar categoría</DialogTitle>
             <DialogDescription>
-              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>? Esta acción no se puede deshacer.
+              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>?
+              Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleting(null)} disabled={loadingDelete}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleting(null)}
+              disabled={loadingDelete}
+            >
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loadingDelete}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={loadingDelete}
+            >
               {loadingDelete ? "Eliminando..." : "Eliminar"}
             </Button>
           </DialogFooter>

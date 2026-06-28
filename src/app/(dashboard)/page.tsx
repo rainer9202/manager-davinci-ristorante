@@ -50,13 +50,12 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map(({ title, value, icon: Icon, description }) => (
           <Card key={title}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-              <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{value}</p>
-              <p className="text-xs text-muted-foreground mt-1">{description}</p>
+            <CardContent className="flex items-center justify-between px-4 py-3">
+              <div>
+                <p className="text-xs text-muted-foreground">{title}</p>
+                <p className="text-2xl font-bold leading-tight">{value}</p>
+              </div>
+              <Icon className="h-5 w-5 text-muted-foreground shrink-0" />
             </CardContent>
           </Card>
         ))}

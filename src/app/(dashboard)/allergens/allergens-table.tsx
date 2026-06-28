@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -53,51 +46,46 @@ export function AllergensTable({
 
   return (
     <>
-      <div className="rounded-md border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead className="w-[100px] text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {allergens.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={2} className="text-center text-muted-foreground py-8">
-                  No hay alérgenos.
-                </TableCell>
-              </TableRow>
-            ) : (
-              allergens.map((a) => (
-                <TableRow key={a.id}>
-                  <TableCell className="font-medium">{a.name}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => setEditing(a)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => setDeleting(a)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {allergens.length === 0 ? (
+          <p className="text-center text-muted-foreground py-8 col-span-full">
+            No hay alérgenos.
+          </p>
+        ) : (
+          allergens.map((a) => (
+            <Card key={a.id}>
+              <CardContent className="px-4 flex items-center justify-between gap-2">
+                <p className="font-medium truncate">{a.name}</p>
+                <div className="flex gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setEditing(a)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive hover:text-destructive"
+                    onClick={() => setDeleting(a)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       {editing && (
         <AllergenForm
           open={!!editing}
-          onClose={() => { setEditing(null); onRefresh(); }}
+          onClose={() => {
+            setEditing(null);
+            onRefresh();
+          }}
           allergen={editing}
         />
       )}
@@ -107,14 +95,23 @@ export function AllergensTable({
           <DialogHeader>
             <DialogTitle>Eliminar alérgeno</DialogTitle>
             <DialogDescription>
-              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>? Esta acción no se puede deshacer.
+              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>?
+              Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleting(null)} disabled={loadingDelete}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleting(null)}
+              disabled={loadingDelete}
+            >
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loadingDelete}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={loadingDelete}
+            >
               {loadingDelete ? "Eliminando..." : "Eliminar"}
             </Button>
           </DialogFooter>

@@ -1,9 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
 import { DishesTable } from "./dishes-table";
 import { DishForm } from "./dish-form";
 
@@ -24,6 +31,8 @@ export default function DishesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [allergens, setAllergens] = useState<Allergen[]>([]);
   const [creating, setCreating] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
 
   async function load() {
     const supabase = createClient();
@@ -46,9 +55,15 @@ export default function DishesPage() {
     setAllergens(allergenData ?? []);
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
+
+  const filtered = useMemo(() => {
+    return dishes.filter((d) => {
+      if (search && !d.name.toLowerCase().includes(search.toLowerCase())) return false;
+      if (filterCategory !== "all" && d.category_id !== filterCategory) return false;
+      return true;
+    });
+  }, [dishes, search, filterCategory]);
 
   return (
     <div className="space-y-6">
@@ -56,7 +71,7 @@ export default function DishesPage() {
         <div>
           <h2 className="text-2xl font-semibold">Platos</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            {dishes.length} plato{dishes.length !== 1 ? "s" : ""} en el menú
+            {filtered.length} plato{filtered.length !== 1 ? "s" : ""} en el menú
           </p>
         </div>
         <Button onClick={() => setCreating(true)} className="gap-2">
@@ -65,8 +80,35 @@ export default function DishesPage() {
         </Button>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nombre..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v ?? "all")}>
+          <SelectTrigger className="w-full sm:w-52">
+            <span className="text-sm">
+              {filterCategory === "all"
+                ? <span className="text-muted-foreground">Todas las categorías</span>
+                : categories.find((c) => c.id === filterCategory)?.name}
+            </span>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas las categorías</SelectItem>
+            {categories.map((c) => (
+              <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <DishesTable
-        dishes={dishes}
+        dishes={filtered}
         categories={categories}
         allergens={allergens}
         onRefresh={load}

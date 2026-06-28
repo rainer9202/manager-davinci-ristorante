@@ -7,14 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -82,14 +74,21 @@ export function DishesTable({
 
   return (
     <>
-      {/* Mobile: cards */}
-      <div className="grid grid-cols-1 gap-3 md:hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {dishes.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">No hay platos.</p>
+          <p className="text-center text-muted-foreground py-8 col-span-full">
+            No hay platos.
+          </p>
         ) : (
           dishes.map((dish) => (
-            <Card key={dish.id} className={!dish.active ? "opacity-50" : ""}>
-              <CardContent className="p-4 space-y-3">
+            <Card key={dish.id} className={`flex flex-col${!dish.active ? " opacity-50" : ""}`}>
+              <CardContent className="px-4 pt-2 flex flex-col h-full space-y-1.5">
+                {dish.category_id && (
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-0 w-fit dark:bg-green-900/30 dark:text-green-400">
+                    {categoryMap[dish.category_id]}
+                  </Badge>
+                )}
+
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <p className="font-semibold truncate">{dish.name}</p>
@@ -99,31 +98,37 @@ export function DishesTable({
                       </p>
                     )}
                   </div>
-                  <p className="font-semibold text-sm shrink-0">{dish.price.toFixed(2)} €</p>
+                  <p className="font-semibold text-sm shrink-0">
+                    {dish.price.toFixed(2)} €
+                  </p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {dish.category_id && (
-                    <Badge variant="secondary">{categoryMap[dish.category_id]}</Badge>
-                  )}
+                <div className="flex flex-wrap gap-1 mt-1 mb-4">
                   {dish.allergen_ids.map((id) =>
                     allergenMap[id] ? (
                       <Badge key={id} variant="outline" className="text-xs">
                         {allergenMap[id].name}
                       </Badge>
-                    ) : null
+                    ) : null,
                   )}
                 </div>
 
-                <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center justify-between pt-2 mt-auto -mx-4 px-4 border-t">
                   <div className="flex items-center gap-2">
-                    <Switch checked={dish.active} onCheckedChange={() => handleToggle(dish)} />
+                    <Switch
+                      checked={dish.active}
+                      onCheckedChange={() => handleToggle(dish)}
+                    />
                     <span className="text-xs text-muted-foreground">
                       {dish.active ? "Activo" : "Inactivo"}
                     </span>
                   </div>
                   <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => setEditing(dish)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setEditing(dish)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
@@ -142,85 +147,13 @@ export function DishesTable({
         )}
       </div>
 
-      {/* Desktop: table */}
-      <div className="hidden md:block rounded-md border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nombre</TableHead>
-              <TableHead>Categoría</TableHead>
-              <TableHead className="hidden lg:table-cell">Alérgenos</TableHead>
-              <TableHead>Precio</TableHead>
-              <TableHead>Activo</TableHead>
-              <TableHead className="w-[100px] text-right">Acciones</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {dishes.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                  No hay platos.
-                </TableCell>
-              </TableRow>
-            ) : (
-              dishes.map((dish) => (
-                <TableRow key={dish.id} className={!dish.active ? "opacity-50" : ""}>
-                  <TableCell>
-                    <p className="font-medium">{dish.name}</p>
-                    {dish.description && (
-                      <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-                        {dish.description}
-                      </p>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {dish.category_id ? (
-                      <Badge variant="secondary">{categoryMap[dish.category_id]}</Badge>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <div className="flex flex-wrap gap-1">
-                      {dish.allergen_ids.map((id) =>
-                        allergenMap[id] ? (
-                          <Badge key={id} variant="outline" className="text-xs">
-                            {allergenMap[id].name}
-                          </Badge>
-                        ) : null
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-medium">{dish.price.toFixed(2)} €</TableCell>
-                  <TableCell>
-                    <Switch checked={dish.active} onCheckedChange={() => handleToggle(dish)} />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => setEditing(dish)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => setDeleting(dish)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
       {editing && (
         <DishForm
           open={!!editing}
-          onClose={() => { setEditing(null); onRefresh(); }}
+          onClose={() => {
+            setEditing(null);
+            onRefresh();
+          }}
           dish={editing}
           categories={categories}
           allergens={allergens}
@@ -232,14 +165,23 @@ export function DishesTable({
           <DialogHeader>
             <DialogTitle>Eliminar plato</DialogTitle>
             <DialogDescription>
-              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>? Esta acción no se puede deshacer.
+              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>?
+              Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleting(null)} disabled={loadingDelete}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleting(null)}
+              disabled={loadingDelete}
+            >
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loadingDelete}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={loadingDelete}
+            >
               {loadingDelete ? "Eliminando..." : "Eliminar"}
             </Button>
           </DialogFooter>
