@@ -24,7 +24,6 @@ interface AllergenFormProps {
 
 export function AllergenForm({ open, onClose, allergen }: AllergenFormProps) {
   const [name, setName] = useState(allergen?.name ?? "");
-  const [icon, setIcon] = useState(allergen?.icon ?? "");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -33,10 +32,10 @@ export function AllergenForm({ open, onClose, allergen }: AllergenFormProps) {
     setLoading(true);
     try {
       if (allergen) {
-        await updateAllergen(allergen.id, name.trim(), icon.trim());
+        await updateAllergen(allergen.id, name.trim(), "");
         toast.success("Alérgeno actualizado");
       } else {
-        await createAllergen(name.trim(), icon.trim());
+        await createAllergen(name.trim(), "");
         toast.success("Alérgeno creado");
       }
       onClose();
@@ -54,20 +53,6 @@ export function AllergenForm({ open, onClose, allergen }: AllergenFormProps) {
           <DialogTitle>{allergen ? "Editar alérgeno" : "Nuevo alérgeno"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="icon">Icono (emoji)</Label>
-            <div className="flex gap-2 items-center">
-              <Input
-                id="icon"
-                value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-                placeholder="🌾"
-                className="w-20 text-center text-xl"
-                maxLength={4}
-              />
-              {icon && <span className="text-2xl">{icon}</span>}
-            </div>
-          </div>
           <div className="space-y-2">
             <Label htmlFor="name">Nombre</Label>
             <Input

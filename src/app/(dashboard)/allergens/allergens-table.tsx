@@ -57,7 +57,6 @@ export function AllergensTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-16">Icono</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead className="w-[100px] text-right">Acciones</TableHead>
             </TableRow>
@@ -65,14 +64,13 @@ export function AllergensTable({
           <TableBody>
             {allergens.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={2} className="text-center text-muted-foreground py-8">
                   No hay alérgenos.
                 </TableCell>
               </TableRow>
             ) : (
               allergens.map((a) => (
                 <TableRow key={a.id}>
-                  <TableCell className="text-xl">{a.icon}</TableCell>
                   <TableCell className="font-medium">{a.name}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
@@ -109,7 +107,7 @@ export function AllergensTable({
           <DialogHeader>
             <DialogTitle>Eliminar alérgeno</DialogTitle>
             <DialogDescription>
-              ¿Seguro que quieres eliminar <strong>{deleting?.icon} {deleting?.name}</strong>? Esta acción no se puede deshacer.
+              ¿Seguro que quieres eliminar <strong>{deleting?.name}</strong>? Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

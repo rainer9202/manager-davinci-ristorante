@@ -177,7 +177,7 @@ export function DishForm({ open, onClose, dish, categories, allergens }: DishFor
                     checked={selectedAllergens.includes(a.id)}
                     onCheckedChange={() => toggleAllergen(a.id)}
                   />
-                  <span>{a.icon} {a.name}</span>
+                  <span>{a.name}</span>
                 </label>
               ))}
             </div>
